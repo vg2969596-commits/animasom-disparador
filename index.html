@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Leads - Animasom</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .top-bar {
+        width: 100%;
+        max-width: 420px;
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
+      }
+      .btn-vendedor {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: bold;
+      }
+      .btn-vendedor:hover {
+        background-color: #5a6268;
+      }
+      .container {
+        width: 100%;
+        max-width: 420px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .logo-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .logo-container img {
+        max-width: 200px;
+        width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
+      h2 {
+        text-align: center;
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: bold;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0 15px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 0.95rem;
+      }
+      button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button[type="submit"]:hover {
+        background-color: #218838;
+      }
+      footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8rem;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <button
+        class="btn-vendedor"
+        onclick="window.location.href = 'vendedores.html'"
+      >
+        Gerenciar Vendedores
+      </button>
+    </div>
+
+    <div class="container">
+      <div class="logo-container">
+        <img src="assets/ANIMASOM.png.png" alt="Logo Animasom" />
+      </div>
+
+      <h2>Cadastro de Leads</h2>
+
+      <form id="leadForm">
+        <label for="nome">Nome do Cliente</label>
+        <input type="text" id="nome" placeholder="Primeiro Nome" required />
+
+        <label for="telefone">Celular (WhatsApp)</label>
+        <input type="text" id="telefone" placeholder="21999999999" required />
+
+        <label for="dataFesta">Data do Evento</label>
+        <input type="date" id="dataFesta" required />
+
+        <label for="codVendedor">Código do Vendedor</label>
+        <select id="codVendedor" required>
+          <option value="">Carregando vendedores...</option>
+        </select>
+
+        <button type="submit">Cadastrar Lead</button>
+      </form>
+    </div>
+
+    <footer>Desenvolvido por Victor</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+      const SUPABASE_URL = "https://ooyhmagecqwwkbclridx.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9veWhtYWdlY3F3d2tiY2xyaWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzODMyNDQsImV4cCI6MjEwMTk1OTI0NH0.c6Cgis9aG9i9o71bdgIYq0VNzY_Gi6f3luXX0JjRm04";
+
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      async function carregarVendedoresSelect() {
+        const select = document.getElementById("codVendedor");
+
+        const { data, error } = await supabaseClient
+          .from("vendedores")
+          .select("*")
+          .order("nome", { ascending: true });
+
+        if (error) {
+          console.error("Erro ao carregar vendedores:", error);
+          select.innerHTML =
+            '<option value="">Erro ao carregar vendedores</option>';
+          return;
+        }
+
+        let html = '<option value="">Selecione o Vendedor</option>';
+        data.forEach((v) => {
+          html += `<option value="${v.codigo}">${v.nome} (${v.codigo})</option>`;
+        });
+        select.innerHTML = html;
+      }
+
+      carregarVendedoresSelect();
+
+      document
+        .getElementById("leadForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const nome = document.getElementById("nome").value;
+          const telefone = document.getElementById("telefone").value;
+          const dataFesta = document.getElementById("dataFesta").value;
+          const codVendedor = document.getElementById("codVendedor").value;
+
+          const { data: leadSalvo, error } = await supabaseClient
+            .from("leads")
+            .insert([
+              {
+                nome_cliente: nome,
+                telefone: telefone,
+                data_festa: dataFesta,
+                cod_vendedor: codVendedor,
+                status_zap: "Pendente",
+              },
+            ])
+            .select();
+
+          if (error) {
+            console.error("Erro ao cadastrar:", error);
+            alert("Erro ao salvar o lead. Verifique os dados.");
+          } else {
+            const idLeadGerado =
+              leadSalvo && leadSalvo.length > 0
+                ? leadSalvo[0].id_lead || leadSalvo[0].id
+                : null;
+
+            const celularLimpo = telefone.replace(/\D/g, "");
+
+            // Mensagem personalizada com o nome e o código do vendedor selecionado
+            const mensagem = `🎉 *Oi, ${nome}! Aqui é da Animasom Rio Sul!* 🤩\n\nRecebemos seu contato e já encaminhamos para a vendedora, que entrará em contato com você em até *1 dia útil* para falar sobre sua festa! 🥳\n\n🎁 *E tem benefício exclusivo:* usando o código *${codVendedor}* ao fechar sua festa, você ganha *5 Day Uses + 5% de CASHBACK em opcionais!*🤩\n\n💬 Qualquer dúvida é só responder esta mensagem que a gente te ajuda! ❤️`;
+
+            const urlWhatsApp = `https://api.whatsapp.com/send?phone=55${celularLimpo}&text=${encodeURIComponent(mensagem)}`;
+
+            window.open(urlWhatsApp, "_blank");
+
+            window.open(urlWhatsApp, "_blank");
+
+            if (idLeadGerado) {
+              await supabaseClient
+                .from("leads")
+                .update({ status_zap: "Enviado" })
+                .eq("id_lead", idLeadGerado);
+            }
+
+            alert("Lead cadastrado e WhatsApp disparado com sucesso!");
+            document.getElementById("leadForm").reset();
+            location.reload();
+          }
+        });
+    </script>
+  </body>
+</html>

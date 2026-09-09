@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciar Vendedores - Animasom</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .container {
+        width: 100%;
+        max-width: 480px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 15px;
+        color: #007bff;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: bold;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      h2 {
+        text-align: center;
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0 15px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 0.95rem;
+      }
+      button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button[type="submit"]:hover {
+        background-color: #0056b3;
+      }
+      .vendedores-list {
+        margin-top: 25px;
+      }
+      .vendedor-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+      .btn-excluir {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+      .btn-excluir:hover {
+        background-color: #c82333;
+      }
+      footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.8rem;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html" class="back-link"
+        >&larr; Voltar para o Cadastro de Leads</a
+      >
+
+      <h2>Gerenciar Vendedores</h2>
+
+      <form id="vendedorForm">
+        <label for="nomeVendedor">Nome do Funcionário</label>
+        <input
+          type="text"
+          id="nomeVendedor"
+          placeholder="Ex: João Silva"
+          required
+        />
+
+        <label for="codigoVendedor">Código (Ex: joao_rs)</label>
+        <input type="text" id="codigoVendedor" placeholder="joao_rs" required />
+
+        <button type="submit">Cadastrar Vendedor</button>
+      </form>
+
+      <div class="vendedores-list">
+        <h3>Vendedores Cadastrados</h3>
+        <div id="listaVendedores">Carregando...</div>
+      </div>
+    </div>
+
+    <footer>Desenvolvido por Victor</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+      const SUPABASE_URL = "https://ooyhmagecqwwkbclridx.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9veWhtYWdlY3F3d2tiY2xyaWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzODMyNDQsImV4cCI6MjEwMTk1OTI0NH0.c6Cgis9aG9i9o71bdgIYq0VNzY_Gi6f3luXX0JjRm04";
+
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      // Função para listar os vendedores cadastrados
+      async function carregarVendedores() {
+        const container = document.getElementById("listaVendedores");
+
+        const { data, error } = await supabaseClient
+          .from("vendedores")
+          .select("*")
+          .order("nome", { ascending: true });
+
+        if (error) {
+          console.error("Erro ao carregar vendedores:", error);
+          container.innerHTML = "<p>Erro ao carregar vendedores.</p>";
+          return;
+        }
+
+        if (data.length === 0) {
+          container.innerHTML = "<p>Nenhum vendedor cadastrado.</p>";
+          return;
+        }
+
+        let html = "";
+        data.forEach((v) => {
+          html += `
+            <div class="vendedor-item">
+              <span><strong>${v.nome}</strong> (${v.codigo})</span>
+              <button class="btn-excluir" onclick="excluirVendedor('${v.codigo}')">Excluir</button>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      }
+
+      // Cadastrar novo vendedor
+      document
+        .getElementById("vendedorForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const nome = document.getElementById("nomeVendedor").value.trim();
+          const codigo = document
+            .getElementById("codigoVendedor")
+            .value.trim()
+            .toUpperCase();
+
+          const { error } = await supabaseClient
+            .from("vendedores")
+            .insert([{ nome: nome, codigo: codigo }]);
+
+          if (error) {
+            console.error("Erro ao cadastrar:", error);
+            alert("Erro ao cadastrar (verifique se o código já existe).");
+          } else {
+            alert("Vendedor cadastrado com sucesso!");
+            document.getElementById("vendedorForm").reset();
+            carregarVendedores();
+          }
+        });
+
+      // Excluir vendedor
+      async function excluirVendedor(codigo) {
+        if (!confirm(`Deseja realmente excluir o vendedor ${codigo}?`)) return;
+
+        const { error } = await supabaseClient
+          .from("vendedores")
+          .delete()
+          .eq("codigo", codigo);
+
+        if (error) {
+          console.error("Erro ao excluir:", error);
+          alert("Erro ao excluir o vendedor.");
+        } else {
+          carregarVendedores();
+        }
+      }
+
+      // Carregar ao iniciar a página
+      carregarVendedores();
+    </script>
+  </body>
+</html>
