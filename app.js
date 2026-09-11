@@ -36,18 +36,10 @@ function processarLista() {
 
         if (!responsavel) return;
 
-        const eFesta = "\uD83C\uDF89"; 
-        const eOlhos = "\uD83E\uDD29"; 
-        const eBolo = "\uD83C\uDF82";  
-        const ePresente = "\uD83C\uDF81"; 
-        const eBrilho = "\u2728";    
-        const eChat = "\uD83D\uDCAC";   
-        const eCoracao = "\u2764\uFE0F"; 
-
-        const mensagem = `${eFesta} *Oi, ${responsavel}! Aqui é da Animasom Rio Sul!* ${eOlhos}\n\n` +
-                         `Vimos que o aniversário do(a) *${nomeCrianca}* está chegando. Já estão planejando essa comemoração especial? ${eBolo}${eFesta}\n\n` +
-                         `${ePresente} Para celebrar a campanha, preparamos uma condição histórica: fechando a festa do(a) *${nomeCrianca}* agora, vocês ganham **30 dias de diária** + *5 Day Uses + 5% de CASHBACK em opcionais!* ${eOlhos}${eBrilho}\n\n` +
-                         `${eChat} O que acha de receber nossa proposta sem compromisso por aqui para conhecer os pacotes? ${eCoracao}`;
+        const mensagem = `Oi, ${responsavel}! Aqui é da Animasom Rio Sul.\n\n` +
+                         `Vimos que o aniversário do(a) ${nomeCrianca} está chegando. Já estão planejando essa comemoração especial?\n\n` +
+                         `Para celebrar a campanha, preparamos uma condição histórica: fechando a festa do(a) ${nomeCrianca} agora, vocês ganham 30 dias de diária + 5 Day Uses + 5% de CASHBACK em opcionais!\n\n` +
+                         `O que acha de receber nossa proposta sem compromisso por aqui para conhecer os pacotes?`;
 
         const linkWpp = `https://wa.me/55${telLimpo}?text=${encodeURIComponent(mensagem)}`;
 
@@ -59,7 +51,7 @@ function processarLista() {
                 <span>Criança: ${nomeCrianca}</span>
             </div>
             <a href="${linkWpp}" target="_blank" class="btn-enviar" onclick="marcarEnviado(this)">
-                💬 Enviar Mensagem
+                Enviar Mensagem
             </a>
         `;
 
@@ -78,7 +70,7 @@ function processarLista() {
 
 function marcarEnviado(botao) {
     setTimeout(() => {
-        botao.innerText = "✅ Enviado";
+        botao.innerText = "Enviado";
         botao.classList.add('enviado');
     }, 500);
 }
