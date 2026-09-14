@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disparador Oficial — Animasom Rio Sul</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <header>
+        <div class="badge-tag">DANI É PERFEIÇÃO</div>
+        <h1>Animasom Rio Sul</h1>
+        <p class="subtitle">Disparador Oficial</p>
+      </header>
+
+      <main>
+        <div class="card">
+          <h2>1. Cole sua lista de leads abaixo</h2>
+          <p class="instruction">
+            Formato: Responsável | Telefone | Nome da Criança (em linhas
+            separadas)
+          </p>
+
+          <textarea
+            id="listaDados"
+            placeholder="Exemplo:
+Victor (21) 97492-2772 Bernardo
+Dani (21) 98289-7893 Sofia"
+          ></textarea>
+
+          <div class="action-bar">
+            <button onclick="processarLista()" class="btn-primary">
+              ⚡ Gerar Fila de Disparos
+            </button>
+            <button onclick="limparTudo()" class="btn-secondary">Limpar</button>
+          </div>
+        </div>
+
+        <!-- Modo de Envio Rápido: um lead por vez, avança com Enter -->
+        <div class="card" id="cardEnvioRapido" style="display: none">
+          <h2>2. Envio Rápido ⚡</h2>
+          <p class="instruction" id="progressoTexto">Lead 1 de 0</p>
+
+          <div class="lead-atual">
+            <strong id="leadAtualNome"></strong>
+            <span id="leadAtualTelefone"></span>
+            <span id="leadAtualCrianca" class="lead-atual-crianca"></span>
+          </div>
+
+          <button
+            id="btnEnviarAtual"
+            class="btn-primary btn-envio-rapido"
+            onclick="enviarAtual()"
+          >
+            💬 Abrir WhatsApp e Avançar (Enter)
+          </button>
+
+          <p class="instruction">
+            Clique aqui, mande no WhatsApp que abrir, volte e aperte Enter
+            para o próximo.
+          </p>
+        </div>
+
+        <!-- Fila de Leads Gerada na Tela -->
+        <div class="card" id="cardFila" style="display: none">
+          <h3>
+            3. 📋 Lista completa (<span id="contadorLeads">0</span>)
+          </h3>
+          <p class="instruction">
+            Prefere manual? Clique em "Enviar" em cada linha aqui.
+          </p>
+          <div id="tabelaFila" class="fila-container"></div>
+        </div>
+      </main>
+
+      <footer>
+        <p>Desenvolvido por Victor</p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
