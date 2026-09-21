@@ -140,6 +140,32 @@ button {
 }
 
 /* Modo de Envio Rápido */
+.config-envio {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.config-envio label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.config-envio input {
+  width: 90px;
+  padding: 8px 10px;
+  font-size: 13px;
+  background-color: #080d1a;
+  border: 1px solid #22304a;
+  color: var(--text-light);
+  border-radius: 6px;
+}
+.config-envio input:focus {
+  outline: none;
+  border-color: var(--electric-blue);
+}
 .lead-atual {
   background: #080d1a;
   border: 1px solid #22304a;

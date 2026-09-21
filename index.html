@@ -29,8 +29,8 @@
           <textarea
             id="listaDados"
             placeholder="Exemplo:
-Victor (21) 97492-2772 Bernardo
-Dani (21) 98289-7893 Sofia"
+Victor (21) 99992-2772 Bernardo
+Dani (21) 99999-7893 Sofia"
           ></textarea>
 
           <div class="action-bar">
@@ -45,6 +45,30 @@ Dani (21) 98289-7893 Sofia"
         <div class="card" id="cardEnvioRapido" style="display: none">
           <h2>2. Envio Rápido ⚡</h2>
           <p class="instruction" id="progressoTexto">Lead 1 de 0</p>
+
+          <div class="config-envio">
+            <label
+              >Limite diário
+              <input
+                type="number"
+                id="inputLimiteDiario"
+                min="1"
+                value="35"
+                onchange="salvarConfigEnvio()"
+              />
+            </label>
+            <label
+              >Intervalo (s)
+              <input
+                type="number"
+                id="inputIntervalo"
+                min="5"
+                value="30"
+                onchange="salvarConfigEnvio()"
+              />
+            </label>
+          </div>
+          <p class="instruction" id="statusEnviosHoje">Enviados hoje: 0 / 35</p>
 
           <div class="lead-atual">
             <strong id="leadAtualNome"></strong>
@@ -61,16 +85,14 @@ Dani (21) 98289-7893 Sofia"
           </button>
 
           <p class="instruction">
-            Clique aqui, mande no WhatsApp que abrir, volte e aperte Enter
-            para o próximo.
+            Clique aqui, mande no WhatsApp que abrir, volte e aperte Enter para
+            o próximo.
           </p>
         </div>
 
         <!-- Fila de Leads Gerada na Tela -->
         <div class="card" id="cardFila" style="display: none">
-          <h3>
-            3. 📋 Lista completa (<span id="contadorLeads">0</span>)
-          </h3>
+          <h3>3. 📋 Lista completa (<span id="contadorLeads">0</span>)</h3>
           <p class="instruction">
             Prefere manual? Clique em "Enviar" em cada linha aqui.
           </p>
