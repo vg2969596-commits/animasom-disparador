@@ -1,3 +1,40 @@
+// --- ECOSSISTEMA VICTOR: mesmo Supabase já usado no "Corrida dos Leads" ---
+// Serve para registrar cada disparo no log central (tabelas `eventos` e
+// `disparos`), permitindo consolidar os resultados dos projetos em um único
+// lugar (hub / planilha do Google Sheets sincronizada).
+const SUPABASE_URL = "https://wpawajkguxvofpexhufn.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_4uAvBCGWXgPG_lyfyWeP0g_OyIivucf";
+const supabaseClient = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+async function registrarDisparoNoEcossistema(lead) {
+  if (!supabaseClient) return;
+
+  try {
+    await supabaseClient.from("disparos").insert([
+      {
+        responsavel: lead.responsavel,
+        telefone: lead.telefoneBruto,
+        nome_crianca: lead.nomeCrianca,
+      },
+    ]);
+
+    await supabaseClient.from("eventos").insert([
+      {
+        projeto: "animasom-disparador",
+        tipo: "disparo_enviado",
+        quantidade: 1,
+        responsavel: lead.responsavel,
+        detalhes: { nome_crianca: lead.nomeCrianca },
+      },
+    ]);
+  } catch (err) {
+    // Falha ao registrar no ecossistema não deve travar o envio da mensagem.
+    console.warn("Não foi possível registrar o disparo no ecossistema:", err);
+  }
+}
+
 const CHAVE_FILA = "disparador_fila_leads";
 const CHAVE_INDICE = "disparador_indice_atual";
 const CHAVE_ENVIOS_HOJE = "disparador_envios_hoje";
@@ -147,6 +184,7 @@ function marcarEnviado(index) {
   if (!lead || lead.enviado) return;
   lead.enviado = true;
   salvarEstado();
+  registrarDisparoNoEcossistema(lead);
 
   setTimeout(() => {
     const leadDiv = document.getElementById(`lead-${index}`);
