@@ -64,7 +64,7 @@ function montarMensagem(responsavel, nomeCrianca) {
   return (
     `Oi, ${responsavel}! Tudo bem? Aqui é da Animasom Rio Sul!\n\n` +
     `O aniversário do(a) *${nomeCrianca}* está chegando e nós preparamos uma surpresa especial para ajudar na comemoração!\n\n` +
-    `Somente neste mês, fechando a festa do(a) aniversariante, você ganha *10% OFF em até 3x sem juros* e ainda leva o *Passaporte Animasom de 30 dias corridos* para aproveitar a unidade\n\n` +
+    `Somente neste mês, fechando a festa do(a) *${nomeCrianca}*, você ganha *10% OFF em até 3x sem juros* e ainda leva o *Passaporte Animasom de 30 dias corridos* para aproveitar a unidade\n\n` +
     `E o melhor: fechando neste mês, você garante a condição e a festa pode ser realizada com toda tranquilidade até setembro de 2027, então dá tempo de planejar tudo sem correria.\n\n` +
     `O que acha de receber nossa proposta sem compromisso por aqui para conhecer os pacotes?`
   );
